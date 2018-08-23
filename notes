@@ -1,0 +1,34 @@
+
+Upload Image (User Activity)
+
+Login -> Dashboard (Date,ImageName,ImageDate) -> Add New Image -> Set Photo, Name, Description -> Upload ->  Show Image + Scroll Bar
+
+
+Upload Image (Background Activity)
+
+Get Uploaded Image -> Anonymization (Javascript) -> Anonymized Image Saved in Database
+
+
+Segmentation (User Activity)
+Login -> Dashboard -> Segment Image -> Display Painting Tools with Selected Image -> Draw using Tools -> Save Segmented Image
+
+Segmentation (Background Activity)
+Get Drawed Image -> Get Point & Line (Javascript) -> Send into Web Services -> Save into Database Historically in Time
+
+Show List (User Activity)
+Login -> Dashboard -> Segmentation Menu -> Choose Image -> Show -> Display Image Fullscreen
+
+Edit Image (User Activity)
+Login -> Dashboard -> Segmentation Menu -> Choose Image -> Edit -> Edit Information -> Click Edit Button to change imageset
+
+Delete Image (User Activity)
+Login -> Dashboard -> Segmentatiion Menu -> Choose Image -> Delete -> Confirmation Box -> Yes Button -> Delete Permanently
+
+
+
+
+
+
+
+
+

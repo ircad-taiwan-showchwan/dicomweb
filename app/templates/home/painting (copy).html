@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }} | Project DICOM (Medical Image Segmentation)</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+     <link href="{{ url_for('static', filename='css/cornerstone.min.css')}}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+        <div class="container topnav">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Project DICOM Image Segmentation</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav navbar-right">
+              	    {% if current_user.is_authenticated %}
+	            	{% if current_user.is_admin %}
+		    		<li><a href="{{ url_for('home.admin_dashboard') }}">Dashboard</a></li>
+		    		<li><a href="{{ url_for('admin.list_users') }}">Users</a></li>
+		    		<li><a href="#">Images</a></li>
+	            	{% else %}
+		    		<li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+	            	{% endif %}
+			<li><a href="{{url_for('home.segmentation')}}">Segmentation</a></li>
+	            	<li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+	            	<li><a><i class="fa fa-user"></i>  Hi, {{ current_user.email }}!</a></li>
+	            {% else %}
+	            	<li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+	            	<li><a href="{{ url_for('auth.register') }}">Register</a></li>
+	            	<li><a href="{{ url_for('auth.login') }}">Login</a></li>
+	            {% endif %}
+		</ul>
+          </div>
+        </div>
+    </nav>
+    <div class="wrapper">
+      
+<div class="content-section" style="height:1000px !important;">
+  <div class="outer" style="margin-left:10% !important;">
+    <div class="middle">
+      <div class="inner">
+          	<div class="container-fluid" >
+		    <div class="page-header" >
+		      <h2>
+			Segment Medical Images
+		      </h2>
+		      <p>
+
+		      </p>
+		      <!-- <a href="../index.html">Go back to the Examples page</a> -->
+		    </div>
+		    <div class="row">
+		      <button id="sampleData">Get Sample Data</button>
+
+		      <p>or</p>
+
+		      <input type="file" value="Select dicom" id="select"></input>
+
+		      <p id='status'>Drop multiple DICOM slices</p>
+		      <div class="col-xs-5 " id="dropZone" >
+			<div style="width:512px;height:512px;position:relative;display:inline-block;border-style:solid;color:black;"
+			    oncontextmenu="return false"
+			    class='cornerstone-enabled-image'
+			    unselectable='on'
+			    onselectstart='return false;'
+			    onmousedown='return false;'>
+			  <div id="dicomImage"
+			    style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+			  </div>
+			</div>
+			<p>Segmentation header:</p>
+			<pre id='segmentationDump'>
+			</pre>
+		      </div>
+
+
+		      <div class="col-xs-7">
+			<h5>Controls:</h5>
+			<ul>
+			  <li>Left click paint</li>
+			  <li>Middle Mouse button drag - pan</li>
+			  <li>Right click drag - zoom</li>
+			</ul>
+
+			<div class="row">
+			  <button id="drawErase" class="btn btn-primary">Erase</button>
+			</div>
+		</br>
+			<div class="row">
+			  <label for="radiusSlider">Radius: <span id="valBox">10</span>px</label>
+			  <input id="radiusSlider" type="range" min="1" max="10" value="10" steps="1" style="width: 200px"/>
+			</div>
+
+			<div class="row">
+			</br>
+			  <!-- <input type="range" class="dicomControls" min="0" max="100" value="0" step="1" id="instanceOffset"> -->
+			  <input type="button" class="dicomControls" id="deriveDICOM" value="Download Multiframe and Segmentation"/>
+			</div>
+			<div class="row">
+			  <!-- CREATE CONFIRMATION TEST  -->
+			</br>
+			<p> <b>Confirmation test </b> </p>
+			  <textarea rows='10  ' cols='48'> </textarea>
+			</div>
+
+		      </div>
+		    </div>
+		  </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="push"></div>
+    </div>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+		    	<li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+		        <li class="footer-menu-divider">⋅</li>
+		        {% if current_user.is_authenticated %}
+		           <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+		        {% else %}
+		           <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+		           <li class="footer-menu-divider">⋅</li>
+		           <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+		        {% endif %}
+		    </ul>
+                    <p class="copyright text-muted small">Copyright © 2018. All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+<script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/FileSaver.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/jszip.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/initWebWorkers.js')}}"></script>
+<script src="{{ url_for('static', filename='js/jqueryFileDrop.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstone.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneMath.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneTools.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/dicomParser.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneWADOImageLoader.min.js')}}"></script>
+<script src="{{ url_for('static', filename='build/dcmjs.js')}}"></script>
+<script src="{{ url_for('static', filename='helpers/DICOMZero.js')}}"></script>
+<script src="{{ url_for('static', filename='js/index.js')}}"></script>
+

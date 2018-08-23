@@ -1,0 +1,36 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+	Uploaded Images
+{% endblock %}
+{% block body %}
+<div class="content-section">
+ <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <div class="center">
+            Uploaded Images
+            <br/>            
+        </div>
+	<div class="container">
+		<div class="header">
+			<h3 class="text-muted">Uploaded Images</h3>
+		</div>
+		<hr/>
+	</div>
+	<div>
+	This is a list of the files you just uploaded, click on them to load/download them
+	<ul>
+		{%for file in filenames%}
+			<li><a href="{{url_for('uploaded_file',filename=file)}}">{{file}}</a></li>
+		{% endfor %}
+	</ul>
+	</div>
+	<div class="header">
+		<h3 class="text-muted">Code to manage a Upload</h3>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

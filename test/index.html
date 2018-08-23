@@ -1,0 +1,81 @@
+<!-- Cornerstone Tools External Dependencies -->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- Cornerstone Latest -->
+<script src="https://unpkg.com/cornerstone-core"></script>
+<script src="https://unpkg.com/cornerstone-math"></script>
+<script src="https://unpkg.com/cornerstone-web-image-loader"></script>
+
+<!-- Cornerstone Tools Latest -->
+<script src="https://unpkg.com/cornerstone-tools"></script>
+
+<script>
+  // TODO: This should happen automatically.
+  cornerstoneWebImageLoader.external.cornerstone = cornerstone
+</script>
+<body>
+ <!-- WRAPPER -->
+<div
+  class="image-canvas-wrapper"
+  oncontextmenu="return false"
+  unselectable='on'
+  onselectstart='return false;'
+  onmousedown='return false;'
+>
+  <!-- DICOM CANVAS TARGET -->
+  <div
+    class="image-canvas"
+    oncontextmenu="return false"
+  ></div>
+</div>
+</body>
+<style>
+.image-canvas-wrapper {
+  width: 500px;
+  height: 325px;
+  margin: 35px auto;
+  background: black;
+}
+.image-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: dodgerblue;
+}
+</style>
+<script type="text/javascript">
+// If we were using the cornerstoneWADOImageLoader, we could load .dcm files
+// The cornerstoneWebImageLoader supports loading and displaying .jpg and .png files
+const exampleImageId = 'brain.jpg'
+const element = document.querySelector('.image-canvas')
+
+// Injects cornerstone "enabled" canvas into DOM
+cornerstone.enable(element)
+
+// Load & Display
+cornerstone
+  .loadImage(exampleImageId)
+  .then(function (image) {
+
+    // Now that we've "loaded" the image, we can display it on
+    // our Cornerstone enabled element of choice
+    cornerstone.displayImage(element, image)
+
+    // We need to enable each way we'd like to be able to receive
+    // and respond to input (mouse, touch, scrollwheel, etc.)
+    cornerstoneTools.mouseInput.enable(element)
+    cornerstoneTools.touchInput.enable(element)
+
+    // Activate mouse tools we'd like to use
+    cornerstoneTools.wwwc.activate(element, 1) // left click
+    cornerstoneTools.pan.activate(element, 2) // middle click
+    cornerstoneTools.zoom.activate(element, 4) // right click
+
+    // Activate Touch / Gesture tools we'd like to use
+    cornerstoneTools.wwwcTouchDrag.activate(element) // - Drag
+    cornerstoneTools.zoomTouchPinch.activate(element) // - Pinch
+    cornerstoneTools.panMultiTouch.activate(element) // - Multi (x2)
+  })
+</script>

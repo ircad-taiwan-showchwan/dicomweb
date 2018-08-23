@@ -1,0 +1,29 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+	Edit Image
+{% endblock %}
+{% block body %}
+<script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+<div class="content-section">
+  <div class="center">
+	<h1>Edit Image</h1>
+
+	<label><!--<h3>Current Image:</h3><label>--><!--<a href="{{url_for('home.uploaded_file',filename=filename)}}">-->
+		<!--<img src="{{url_for('home.uploaded_file',filename=filename)}}" style="width:400px;" />
+		-->
+		<!--<div id="m"></div>-->
+	<!--</a>-->
+	<br/><br/>
+	{{wtf.quick_form(form)}}
+	
+   </div>
+</div>
+<script>
+	url=window.location.href;
+  	var id_image = url.substring(url.lastIndexOf('/') + 1);
+	//$('#m').load('http://fiddle.jshell.net/qAa4u/show/light #1');
+	//$("#m").load('http://127.0.0.1/view/15');
+</script>
+{% endblock %}
+

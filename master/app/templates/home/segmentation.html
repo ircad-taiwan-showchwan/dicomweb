@@ -1,0 +1,59 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+	{%if add_image%}	
+		Add Image
+	{%else %}
+		Edit Image
+	{%endif%}
+{% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="center">
+	{{add_image}}
+	{% if add_image %}
+		<h1>Add Image</h1>
+	{% else %}
+		<h1>Edit Image</h1>
+	{% endif %}
+  
+	{{wtf.quick_form(form)}}
+	{% if add_image %}
+		<div>
+			Halo 
+		</div>
+	{% else %}
+		<div>
+			{{urlfile}}
+			<img src="{{urlfile}}" style="width:320px !important;" />		
+		</div>
+	{% endif %}
+    <!--{{ wtf.quick_form(form) }}-->
+	
+	<!--
+	<form action="" method="post" class="form" enctype="multipart/form-data" role="form">
+   {{form.csrf_token}}
+<div class="form-group  required"><label class="control-label" for="image_name">Image Name</label>
+        
+          <input class="form-control" id="image_name" name="image_name" required type="text" value="">
+        
+  </div>
+<div class="form-group  required"><label class="control-label" for="image_description">Image Description</label>
+        
+          <input class="form-control" id="image_description" name="image_description" required type="text" value="">
+        
+  </div>
+
+<div class="form-group  required"><label class="control-label" for="image_filename">Image Upload</label>
+        
+          <input id="image_filename" name="image_filename" required type="file"> 
+ </div>
+ 
+    <input class="btn btn-default" id="submit" name="submit" type="submit" value="Save Image">
+  
+
+</form>-->
+  </div>
+</div>
+{% endblock %}
+

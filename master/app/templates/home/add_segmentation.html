@@ -1,0 +1,14 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+	Add Image
+{% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="center">
+	<h1>Add Image</h1>
+	{{wtf.quick_form(form)}}
+  </div>
+</div>
+{% endblock %}
+

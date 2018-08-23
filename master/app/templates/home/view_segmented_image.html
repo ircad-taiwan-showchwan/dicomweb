@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/cornerstone.min.css')}}" rel="stylesheet">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+        <div class="container topnav">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Project DICOM Image Segmentation</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav navbar-right">
+              	    {% if current_user.is_authenticated %}
+	            	{% if current_user.is_admin %}
+		    		<li><a href="{{ url_for('home.admin_dashboard') }}">Dashboard</a></li>
+		    		<li><a href="{{ url_for('admin.list_users') }}">Users</a></li>
+		    		<li><a href="#">Images</a></li>
+	            	{% else %}
+		    		<li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+	            	{% endif %}
+			<li><a href="{{url_for('home.segmentation')}}">Segmentation</a></li>
+	            	<li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+	            	<li><a><i class="fa fa-user"></i>  Hi, {{ current_user.email }}!</a></li>
+	            {% else %}
+	            	<li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+	            	<li><a href="{{ url_for('auth.register') }}">Register</a></li>
+	            	<li><a href="{{ url_for('auth.login') }}">Login</a></li>
+	            {% endif %}
+		</ul>
+          </div>
+        </div>
+    </nav>
+
+    <div id="loadProgress">Image Load Progress:</div>
+    <div class="row" style="visibility: hidden;">
+        <form id="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="wadoURL">URL</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" id="wadoURL" placeholder="Enter WADO URL" value="https://raw.githubusercontent.com/cornerstonejs/cornerstoneWADOImageLoader/master/testImages/CT2_J2KR">
+                </div>
+                <div class="col-sm-3">
+                    <button class="form-control" type="button" id="downloadAndView" class="btn btn-primary">Download and View</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="load" class="btn btn-primary">Load</button>
+                </div>
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="unload" class="btn btn-primary">Unload</button>
+                </div>
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="purge" class="btn btn-primary">Purge Cache</button>
+                </div>
+            </div>
+        </form>
+    </div>
+   
+    <br>
+    <center>
+   <h3 style="margin-top:-30px;margin-left:78px;">
+        Medical Images
+    </h3>
+
+      <div class="row" style="margin-left:78px;">
+
+      <div class="col-xs-12 " id="dropZone" >
+        <div style="width:512px;height:512px;position:relative;display:inline-block;border-style:solid;color:black;"
+            oncontextmenu="return false"
+            class='cornerstone-enabled-image'
+            unselectable='on'
+            onselectstart='return false;'
+            onmousedown='return false;'>
+          <div id="dicomImage"
+            style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+          </div>
+        </div>
+      </div>   
+    </div>
+
+	   
+</body>
+
+<footer style="margin-top:90%;">
+        <div class="container" >
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+          <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+            <li class="footer-menu-divider">⋅</li>
+            {% if current_user.is_authenticated %}
+               <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% else %}
+               <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+               <li class="footer-menu-divider">⋅</li>
+               <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+                    <p class="copyright text-muted small">Copyright © 2018. All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+<script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/FileSaver.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/jszip.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/initWebWorkers.js')}}"></script>
+<script src="{{ url_for('static', filename='js/jqueryFileDrop.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstone.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneMath.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneTools.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/dicomParser.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/cornerstoneWADOImageLoader.min.js')}}"></script>
+<script src="{{ url_for('static', filename='build/dcmjs.js')}}"></script>
+<script src="{{ url_for('static', filename='helpers/DICOMZero.js')}}"></script>
+<script src="{{ url_for('static', filename='js/index2.js')}}"></script>
+</html>

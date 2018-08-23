@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/cornerstone.min.css')}}" rel="stylesheet">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation" >
+        <div class="container topnav">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Project DICOM Image Segmentation</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('home.admin_dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('admin.list_users') }}">Users</a></li>
+                    <li><a href="#">Images</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+                    {% endif %}
+            <li><a href="{{url_for('home.segmentation')}}">Segmentation</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                    <li><a><i class="fa fa-user"></i>  Hi, {{ current_user.email }}!</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                {% endif %}
+        </ul>
+          </div>
+        </div>
+    </nav>
+    <div id="loadProgress">Image Load Progress:</div>
+    <div class="row" style="visibility: hidden;">
+        <form id="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="wadoURL">URL</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" id="wadoURL" placeholder="Enter WADO URL" value="https://raw.githubusercontent.com/cornerstonejs/cornerstoneWADOImageLoader/master/testImages/CT2_J2KR">
+                </div>
+                <div class="col-sm-3">
+                    <button class="form-control" type="button" id="downloadAndView" class="btn btn-primary">Download and View</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="load" class="btn btn-primary">Load</button>
+                </div>
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="unload" class="btn btn-primary">Unload</button>
+                </div>
+                <div class="col-sm-2">
+                    <button class="form-control" type="button" id="purge" class="btn btn-primary">Purge Cache</button>
+                </div>
+            </div>
+        </form>
+    </div>
+   
+    <br>
+
+
+   <h3 style="margin-top:-30px;">
+        Medical Images
+    </h3>
+    <h4 style="margin-top:30px;position:right;"><a href="http://127.0.0.1/segmentedlist/{{parentid}}">Back to List</a></h4>
+      <div class="col-xs-5 " id="dropZone" >
+        <div style="width:512px;height:512px;position:relative;display:inline-block;border-style:solid;color:black;"
+            oncontextmenu="return false"
+            class='cornerstone-enabled-image'
+            unselectable='on'
+            onselectstart='return false;'
+            onmousedown='return false;'>
+          <div id="dicomImage"
+            style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-xs-7" style="width:400px;margin-left:100px;">
+        <div class="row" style="visibility: hidden;">
+          <label for="filename">Save as:</label>
+          <input id="filename" type="text" value="cornerstone.png">
+        </div>
+        <div class="row">
+          <label for="radiusSlider">Radius: <span id="valBox">10</span>px</label>
+          <input id="radiusSlider" type="range" min="1" max="10" value="10" steps="1" style="width: 200px"/>
+        </div>
+        <h5>Controls:</h5>
+        <ul>
+          <li>Left click paint</li>
+          <li>Middle Mouse button drag - pan</li>
+          <li>Right click drag - zoom</li>
+        </ul>
+
+        <div class="row">
+          
+          <button id="save" class="btn btn-primary">Save</button>
+          <button id="drawErase" class="btn btn-primary">Erase</button>
+          <button id="setBrush" class="btn btn-primary">Brush</button>
+        </div>
+        </br>
+
+        
+        <div class="row">
+          <!-- CREATE CONFIRMATION TEST  -->
+            </br>
+            <p> <b>Confirmation Test </b> </p>
+            <textarea rows='10  ' cols='48' id="confirmationBox"> </textarea>
+        </div>
+
+      </div>
+    <br/><br/><br/><br/><br/>
+    </div>
+</div>
+
+
+<!-- jQuery UI -->
+<script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.mouse.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.draggable.1.10.3.min.js"></script>
+
+<!-- wColorPicker -->
+<link rel="Stylesheet" type="text/css" href="./lib/wColorPicker.min.css" />
+<script type="text/javascript" src="./lib/wColorPicker.min.js"></script>
+
+<!-- wPaint -->
+<link rel="Stylesheet" type="text/css" href="./wPaint.min.css" />
+<script type="text/javascript" src="./wPaint.min.js"></script>
+<script type="text/javascript" src="./plugins/main/wPaint.menu.main.min.js"></script>
+<script type="text/javascript" src="./plugins/text/wPaint.menu.text.min.js"></script>
+<script type="text/javascript" src="./plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
+<script type="text/javascript" src="./plugins/file/wPaint.menu.main.file.min.js"></script>
+
+
+
+
+
+<script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{ url_for('static', filename='test_dicom/cornerstone.min.js')}}"></script>
+<script src="{{ url_for('static', filename='test_dicom/cornerstoneMath.min.js')}}"></script>
+<script src="{{ url_for('static', filename='test_dicom/cornerstoneTools.min.js')}}"></script>
+<script src="{{ url_for('static', filename='pixel-util-master/pixel-util.min.js')}}"></script>
+
+<!-- include the dicomParser library as the WADO image loader depends on it -->
+<script src="{{ url_for('static', filename='test_dicom/dicomParser.min.js')}}"></script>
+
+<!-- BEGIN Optional Codecs -->
+
+<!-- OpenJPEG based jpeg 2000 codec -->
+<script src="{{ url_for('static', filename='test_dicom/openJPEG-FixedMemory.js')}}"></script>
+
+<!-- PDF.js based jpeg 2000 codec -->
+<!-- NOTE: do not load the OpenJPEG codec if you use this one -->
+<!-- <script src="../../codecs/jpx.min.js"></script> -->
+
+<!-- JPEG-LS codec -->
+<script src="{{ url_for('static', filename='test_dicom/charLS-FixedMemory-browser.js')}}"></script>
+
+<!-- JPEG Lossless codec -->
+<script src="{{ url_for('static', filename='test_dicom/jpegLossless.js')}}"></script>
+
+<!-- JPEG Baseline codec -->
+<script src="{{ url_for('static', filename='test_dicom/jpeg.js')}}"></script>
+
+<!-- Deflate transfer syntax codec -->
+<script src="{{ url_for('static', filename='test_dicom/pako.min.js')}}"></script>
+
+<!-- END Optional Codecs -->
+
+<!-- include the cornerstoneWADOImageLoader library -->
+<script src="{{ url_for('static', filename='test_dicom/cornerstoneWADOImageLoader.js')}}"></script>
+
+<script src="{{ url_for('static', filename='test_dicom/uids.js')}}"></script>
+
+<!-- Lines ONLY required for this example to run without building the project -->
+<script>window.cornerstoneWADOImageLoader || document.write('<script src="https://unpkg.com/cornerstone-wado-image-loader">\x3C/script>')</script>
+
+<script>
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+
+    cornerstoneWADOImageLoader.configure({
+        beforeSend: function(xhr) {
+            // Add custom headers here (e.g. auth tokens)
+            //xhr.setRequestHeader('APIKEY', 'my auth token');
+        }
+    });
+
+    var loaded = false;
+
+    function loadAndViewImage(imageId) {
+        var element = document.getElementById('dicomImage');
+
+        try {
+            var start = new Date().getTime();
+            cornerstone.loadAndCacheImage(imageId).then(function(image) {
+                //console.log(image);
+                var viewport = cornerstone.getDefaultViewportForImage(element, image);
+               
+                cornerstone.displayImage(element, image, viewport);
+                if(loaded === false) {
+                   // cornerstoneTools.mouseInput.enable(element);
+                    //cornerstoneTools.mouseWheelInput.enable(element);
+                      //cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
+                      //cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
+                      //cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
+                      cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
+
+                      cornerstone.addLayer(element, image);
+                      cornerstone.updateImage(element);
+                      //cornerstoneTools.wwwc.activate(element, 1); 
+                      cornerstoneTools.mouseInput.enable(element);
+                      cornerstoneTools.mouseWheelInput.enable(element);
+                      cornerstoneTools.keyboardInput.enable(element);
+                      cornerstoneTools.brush.activate(element, 1);
+                      setBrushRadius();
+                      cornerstoneTools.pan.activate(element, 2);
+                      cornerstoneTools.zoom.activate(element, 4);
+                      cornerstoneTools.zoomWheel.activate(element);
+                      cornerstoneTools.stackScrollWheel.activate(element);
+                      cornerstoneTools.stackScrollKeyboard.activate(element);
+                    loaded = true;
+                }
+
+                function getTransferSyntax() {
+                    const value = image.data.string('x00020010');
+                    return value + ' [' + uids[value] + ']';
+                }
+
+                function getSopClass() {
+                    const value = image.data.string('x00080016');
+                    return value + ' [' + uids[value] + ']';
+                }
+
+                function getPixelRepresentation() {
+                    const value = image.data.uint16('x00280103');
+                    if(value === undefined) {
+                        return;
+                    }
+                    return value + (value === 0 ? ' (unsigned)' : ' (signed)');
+                }
+
+                function getPlanarConfiguration() {
+                    const value = image.data.uint16('x00280006');
+                    if(value === undefined) {
+                        return;
+                    }
+                    return value + (value === 0 ? ' (pixel)' : ' (plane)');
+                }
+
+
+                
+                var end = new Date().getTime();
+                var time = end - start;
+
+            }, function(err) {
+                alert(err);
+            });
+        }
+        catch(err) {
+            alert(err);
+        }
+    }
+
+    function drawData() {
+        cornerstone.disable(element);
+        cornerstone.enable(element);
+        cornerstoneTools.clearToolState(element, 'stack');
+
+        //var baseImageId = 'dicomweb:' + 'https://s3.amazonaws.com/IsomicsPublic/SampleData/MRHead/MRHead-8-slices.dcm'
+        const baseImageId='dicomweb:'+'http://127.0.0.1/uploads/MRHead-8-slices.dcm';
+        
+        var dataPromise = loadMultiFrameAndPopulateMetadata(baseImageId);
+        Promise.all([dataPromise,]).then(values => {
+          dc0.multiframe = values[0];
+          dc0.seg = new DCMJS.derivations.Segmentation([dc0.multiframe]);
+
+          var cielab = DCMJS.data.Colors.rgb2DICOMLAB([1, 0, 0]);
+          dc0.seg.dataset.SegmentSequence[0].RecommendedDisplayCIELabValue = cielab;
+          var imageIds = getImageIds(dc0.multiframe, baseImageId);
+
+          dc0.cornerstoneStack = {
+            imageIds: imageIds,
+            currentImageIdIndex: 0,
+            options: {
+              name: 'Referenced Image'
+            }
+          };
+          activateCornerstoneStack();
+
+        });
+      }
+    function activateCornerstoneStack() {
+        // activates the dc0 singleton stack that has been set up either with
+        // demo data or with user data
+        cornerstone.loadAndCacheImage(dc0.cornerstoneStack.imageIds[0]).then(function(image) {
+          // console.log(image);
+          cornerstone.addLayer(element, image);
+          cornerstone.updateImage(element);
+
+          cornerstoneTools.addStackStateManager(element, ['stack']);
+          cornerstoneTools.addToolState(element, 'stack', dc0.cornerstoneStack);
+
+          cornerstoneTools.mouseInput.enable(element);
+          cornerstoneTools.mouseWheelInput.enable(element);
+          cornerstoneTools.keyboardInput.enable(element);
+          cornerstoneTools.brush.activate(element, 1);
+          setBrushRadius();
+          cornerstoneTools.pan.activate(element, 2);
+          cornerstoneTools.zoom.activate(element, 4);
+          cornerstoneTools.stackScrollWheel.activate(element);
+          cornerstoneTools.stackScrollKeyboard.activate(element);
+        });
+      }
+
+      var $drawEraseButton = $('#drawErase');
+      $drawEraseButton.click(function () {
+        var configuration = cornerstoneTools.brush.getConfiguration();
+        if (configuration.draw === 0) {
+          configuration.draw = 1;
+          $drawEraseButton.text("Erase");
+        } else {
+          configuration.draw = 0;
+          $drawEraseButton.text("Draw");
+        }
+        cornerstoneTools.brush.setConfiguration(configuration);
+      });
+
+      var $radiusSlider = $('#radiusSlider');
+      function setBrushRadius() {
+        var configuration = cornerstoneTools.brush.getConfiguration();
+        var radius = $radiusSlider.val();
+        $('#valBox').text(radius);
+        configuration.radius = radius;
+        cornerstoneTools.brush.setConfiguration(configuration);
+      }
+      $radiusSlider.on('input', setBrushRadius);
+
+
+    function downloadAndView(urls) {
+        //let url = document.getElementById('wadoURL').value;
+
+        // prefix the url with wadouri: so cornerstone can find the image loader
+        url = "wadouri:" + urls;
+	//url="dicomweb:"+url;
+        // image enable the dicomImage element and activate a few tools
+        loadAndViewImage(url);
+    }
+
+    cornerstone.events.addEventListener('cornerstoneimageloadprogress', function(event) {
+        const eventData = event.detail;
+        const loadProgress = document.getElementById('loadProgress');
+        loadProgress.textContent = `Image Load Progress: ${eventData.percentComplete}%`;
+    });
+
+    function getUrlWithoutFrame() {
+        //var url = document.getElementById('wadoURL').value;
+	var url = document.getElementById('wadoURL').value;        
+	var frameIndex = url.indexOf('frame=');
+        if(frameIndex !== -1) {
+            url = url.substr(0, frameIndex-1);
+        }
+        return url;
+    }
+
+    var element = document.getElementById('dicomImage');
+    cornerstone.enable(element);
+
+    document.getElementById('downloadAndView').addEventListener('click', function(e) {
+        //downloadAndView();
+    });
+    document.getElementById('load').addEventListener('click', function(e) {
+        var url = getUrlWithoutFrame();
+        cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.load(url);
+    });
+    document.getElementById('unload').addEventListener('click', function(e) {
+        var url = getUrlWithoutFrame();
+        cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.unload(url);
+    });
+
+    document.getElementById('purge').addEventListener('click', function(e) {
+        cornerstone.imageCache.purgeCache();
+    });
+
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function() {
+        downloadAndView();
+        return false;
+    });
+
+    function GetGambar(id){
+        $.ajax({url: "http://127.0.0.1/apisegmented/"+id, success: function(result){
+            
+            downloadAndView("http://127.0.0.1/uploads/"+result.file_name);
+            $("textarea#confirmationBox").val(result.comment);
+        }});
+    
+    }
+
+    function dataURItoBlob(dataURI) {
+            // convert base64/URLEncoded data component to raw binary data held in a string
+            var byteString;
+            if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                byteString = atob(dataURI.split(',')[1]);
+            else
+                byteString = unescape(dataURI.split(',')[1]);
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            // write the bytes of the string to a typed array
+            var ia = new Uint8Array(byteString.length);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ia], { type:mimeString });
+        }
+
+
+    url=window.location.href;
+    id_image = url.substring(url.lastIndexOf('/') + 1);
+    GetGambar(id_image);
+
+
+    $("#setBrush").click(function(){
+        var configuration = cornerstoneTools.brush.getConfiguration();
+        var radius = 0;
+        configuration.radius = radius;
+        cornerstoneTools.brush.setConfiguration(configuration);
+    });
+
+    var $save = $('#save').click(function () { 
+      canvas=$("#dicomImage canvas");
+      dataURL=canvas[0].toDataURL("image/png");
+      $.ajax({
+        type:"POST",
+        url:"http://127.0.0.1/edit_uploaded_citra",
+        crossDomain:true,
+        processData:false,
+        data:encodeURIComponent(dataURL),
+        success: function(response){
+            if(response!="error"){
+                //console.log('Done');  
+                //alert("Successfully Saved Image");
+                confirmationBox=$("textarea#confirmationBox").val();
+                im_id=id_image;
+                jpg_filename=response.jpg_image_filename
+                dicom_filename=response.dicom_image_filename
+                //alert(confirmationBox)
+                $.ajax({
+                  type:"POST",
+                  url:"http://127.0.0.1/editconfirmation",
+                  crossDomain:true,
+                  processData:false,
+                  data:"confirm="+confirmationBox+"&im_id="+im_id+"&jpg_filename="+jpg_filename+"&dicom_filename="+dicom_filename,
+                  success: function(response){
+                      if(response=="ok"){
+                          console.log('Done');  
+                          alert("Successfully Saved Image");
+                      }
+                      else{
+                        console.log("Error");
+                      }
+                  },
+                  error:function(xhr,status){
+                      console.log(xhr);
+                      console.log(status);
+                      console.log("error");
+                  }
+                });
+            }
+            else{
+              console.log("Error");
+            }
+        },
+        error:function(xhr,status){
+            console.log(xhr);
+            console.log(status);
+            console.log("error");
+        }
+      }); 
+      return false; 
+    }),
+    clickListener = jQuery._data($save[0], 'events').click[0];
+    //unbind all
+    $save.off('click');
+    $save.click(function () { 
+      $("#setBrush").triggerHandler("click");
+    });
+    $save.click(clickListener.handler);
+    
+    /*$("#save").click(function(){
+        var $save = $('#save').click(function () { alert('plugin'); return false; }),
+        clickListener = jQuery._data($save[0], 'events').click[0];
+        //unbind all
+        $save.off('click');
+        $save.click(function () { alert('yours'); });
+        $save.click(clickListener.handler);
+        $save.triggerHandler('click');
+    });*/
+    
+    /*
+    counter_click=0;
+    $("#save").click(function(){
+      $("#setBrush").trigger("click");
+      canvas=$("#dicomImage canvas");
+      dataURL=canvas[0].toDataURL("image/png");
+      $.ajax({
+        type:"POST",
+        url:"http://127.0.0.1/upload_citra",
+        crossDomain:true,
+        processData:false,
+        data:encodeURIComponent(dataURL),
+        success: function(response){
+            if(response=="ok"){
+                console.log('Done');  
+                alert("Successfully Saved Image");
+            }
+            else{
+              console.log("Error");
+            }
+        },
+        error:function(xhr,status){
+            console.log(xhr);
+            console.log(status);
+            console.log("error");
+        }
+      });
+      
+      //console.log(canvas);
+      //canvas.hide();
+
+      /*var filename="tester.png";
+      if(confirm("Are you sure to save this image?")){
+          cornerstoneTools.saveAs(element,filename);
+      }
+      else{
+          alert("Okay then");
+      }*/
+      /*
+      var image= new Image;
+      image.src= 'http://127.0.0.1/uploads/brain.jpg';
+      pixelUtil.fetchImageData(image).then(function(imageData){
+        var source= {data:new Array(imageData.data.length)};
+        for(var i= 0; i< imageData.data.length; i++){
+          source.data[i]= 0;
+        }
+        source.data[0]= 255;
+
+        pixelUtl.set(imageData,source); // undefined
+
+        console.log(imageData[0]); // 255
+        console.log(imageData[imageData.data.length-1]); // 0
+      });*/
+      //var filename = document.getElementById('filename').value;
+      //cornerstoneTools.saveAs(element, filename);
+      //console.log(cornerstoneTools.saveAs(element, filename));
+        /*let state2 = cornerstoneTools.appState.save([element]);
+        let unitarray = [];
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        var ctx = canvas.getContext('2d');
+
+        var imgData = ctx.createImageData(128, 128); // width x height
+        var data = imgData.data;
+
+        for (var i = 0, len = 128 * 128 * 4; i < len; i++) {
+            if (i < 20000) {
+                data[i] = 4;
+            } else {
+                data[i] = 0;
+            }
+        }
+
+        var path= "http://127.0.0.1/uploads/brain.jpg";
+        pixelUtil.createBuffer(path).then(function(buffer){
+            console.log(buffer);// <Buffer 47 49 46 38 39 ...
+        });*/
+        /*
+        pixelUtil.createBuffer(data).then(function(buffer){
+            var blob=new Blob([buffer],{type:'image/png'});
+            URL="http://127.0.0.1/uploads/brain.jpg";
+            var url=URL.createObjectURL(blob);
+            console.log(url);
+
+        });
+        */
+        /*
+        pixelUtil.createBuffer(data).then(function(buffer) {
+            var blob = new Blob([buffer], { type:'image/png' });
+            var url = URL.createObjectURL(blob);
+            console.log(url);
+            var reader = new FileReader();
+            reader.readAsDataURL(blob); 
+            reader.onloadend = function() {
+                var base64data = reader.result;
+                console.log(base64data.length)              
+                pixelUtil.createBuffer(dataURItoBlob(base64data)).then(function(buffer) {
+                    unitarray = new Uint8ClampedArray(buffer);
+                    restore(unitarray)
+                });
+            }
+        });
+        
+      return false;
+    });*/
+
+</script>
+
+ <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+                <li class="footer-menu-divider">⋅</li>
+                {% if current_user.is_authenticated %}
+                   <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                {% else %}
+                   <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                   <li class="footer-menu-divider">⋅</li>
+                   <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+                    <p class="copyright text-muted small">Copyright © 2018. All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body><!-- include the cornerstone library -->
+
+   
+</html>

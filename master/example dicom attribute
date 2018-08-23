@@ -1,0 +1,89 @@
+(0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY', 'AXIAL']
+(0008, 0016) SOP Class UID                       UI: CT Image Storage
+(0008, 0018) SOP Instance UID                    UI: 1.2.392.200036.9116.2.6.1.16.1613471867.1395200969.357711
+(0008, 0020) Study Date                          DA: '20140319'
+(0008, 0021) Series Date                         DA: '20140319'
+(0008, 0022) Acquisition Date                    DA: '20140319'
+(0008, 0023) Content Date                        DA: '20140319'
+(0008, 0030) Study Time                          TM: '124138.000'
+(0008, 0031) Series Time                         TM: '124533.578'
+(0008, 0032) Acquisition Time                    TM: '124343.050'
+(0008, 0033) Content Time                        TM: '124352.080'
+(0008, 0050) Accession Number                    SH: '5278'
+(0008, 0060) Modality                            CS: 'CT'
+(0008, 0070) Manufacturer                        LO: 'TOSHIBA'
+(0008, 0080) Institution Name                    LO: 'CHANG BING SHOW CHWAN'
+(0008, 0090) Referring Physician's Name          PN: 'anonymus'
+(0008, 1010) Station Name                        SH: '0000000001'
+(0008, 103e) Series Description                  LO: ' 1.0 Abdomen'
+(0008, 1040) Institutional Department Name       LO: 'ID_DEPARTMENT'
+(0008, 1090) Manufacturer's Model Name           LO: 'Aquilion'
+(0008, 2111) Derivation Description              ST: 'Lossy compression with JPEG 2K , quality factor 1, compression ratio 6.6481'
+(0008, 9215) Derivation Code Sequence            SQ: <Sequence, length 1>
+(0008, 0100) Code Value                          SH: '121327'
+(0008, 0102) Coding Scheme Designator            SH: 'DCM'
+(0008, 0104) Code Meaning                        LO: 'Full fidelity image, uncompressed or lossless compressed'
+(0010, 0010) Patient's Name                      PN: 'anonymus'
+(0010, 0020) Patient ID                          LO: 'id'
+(0010, 0030) Patient's Birth Date                DA: ''
+(0010, 0040) Patient's Sex                       CS: ''
+(0018, 0022) Scan Options                        CS: 'HELICAL_CT'
+(0018, 0050) Slice Thickness                     DS: "1.0"
+(0018, 0060) KVP                                 DS: "120"
+(0018, 0090) Data Collection Diameter            DS: "500.00"
+(0018, 1000) Device Serial Number                LO: 'HCB0933572'
+(0018, 1020) Software Version(s)                 LO: 'V3.35ER007'
+(0018, 1030) Protocol Name                       LO: 'Abdomen C-'
+(0018, 1100) Reconstruction Diameter             DS: "449.218"
+(0018, 1120) Gantry/Detector Tilt                DS: "+0.0"
+(0018, 1130) Table Height                        DS: "+99.00"
+(0018, 1140) Rotation Direction                  CS: 'CW'
+(0018, 1150) Exposure Time                       IS: '500'
+(0018, 1151) X-Ray Tube Current                  IS: '120'
+(0018, 1152) Exposure                            IS: '60'
+(0018, 1170) Generator Power                     IS: '14'
+(0018, 1190) Focal Spot(s)                       DS: ['1.6', '1.4']
+(0018, 1210) Convolution Kernel                  SH: 'FC02'
+(0018, 5100) Patient Position                    CS: 'FFS'
+(0018, 9345) CTDIvol                             FD: 9.1
+(0020, 000d) Study Instance UID                  UI: 1.2.392.200036.9116.2.6.1.16.1613471867.1395200466.507624
+(0020, 000e) Series Instance UID                 UI: 1.2.392.200036.9116.2.6.1.16.1613471867.1395200734.207148
+(0020, 0010) Study ID                            SH: '8735'
+(0020, 0011) Series Number                       IS: '4'
+(0020, 0012) Acquisition Number                  IS: '3'
+(0020, 0013) Instance Number                     IS: '563'
+(0020, 0020) Patient Orientation                 CS: ['L', 'P']
+(0020, 0032) Image Position (Patient)            DS: ['-216.7968', '-224.6093', '681.9000']
+(0020, 0037) Image Orientation (Patient)         DS: ['1.00000', '0.00000', '0.00000', '0.00000', '1.00000', '0.00000']
+(0020, 0052) Frame of Reference UID              UI: 1.2.392.200036.9116.2.6.1.16.1613471867.1395200500.960528
+(0020, 1040) Position Reference Indicator        LO: ''
+(0020, 1041) Slice Location                      DS: "+449.60"
+(0020, 4000) Image Comments                      LT: 'Abdomen'
+(0028, 0002) Samples per Pixel                   US: 1
+(0028, 0004) Photometric Interpretation          CS: 'MONOCHROME2'
+(0028, 0010) Rows                                US: 512
+(0028, 0011) Columns                             US: 512
+(0028, 0030) Pixel Spacing                       DS: ['0.877', '0.877']
+(0028, 0100) Bits Allocated                      US: 16
+(0028, 0101) Bits Stored                         US: 16
+(0028, 0102) High Bit                            US: 15
+(0028, 0103) Pixel Representation                US: 0
+(0028, 1050) Window Center                       DS: "40"
+(0028, 1051) Window Width                        DS: "480"
+(0028, 1052) Rescale Intercept                   DS: "-3071"
+(0028, 1053) Rescale Slope                       DS: "1"
+(0028, 2110) Lossy Image Compression             CS: '01'
+(0028, 2112) Lossy Image Compression Ratio       DS: "6.6481"
+(0028, 2114) Lossy Image Compression Method      CS: 'ISO_10918_1'
+(0040, 0002) Scheduled Procedure Step Start Date DA: '20140319'
+(0040, 0003) Scheduled Procedure Step Start Time TM: '124105.000'
+(0040, 0004) Scheduled Procedure Step End Date   DA: '20140319'
+(0040, 0005) Scheduled Procedure Step End Time   TM: '131105.000'
+(0040, 0244) Performed Procedure Step Start Date DA: '20140319'
+(0040, 0245) Performed Procedure Step Start Time TM: '124138.000'
+(0040, 0253) Performed Procedure Step ID         SH: '8736'
+(0040, 0275) Request Attributes Sequence         SQ: <Sequence, length 1>
+(0040, 1001) Requested Procedure ID              SH: '8735'
+(7fe0, 0010) Pixel Data                          OB: Array of 83812 bytes
+(0008, 0070) Manufacturer                        LO: 'TOSHIBA'
+

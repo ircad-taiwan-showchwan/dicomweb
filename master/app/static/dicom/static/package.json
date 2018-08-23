@@ -1,0 +1,31 @@
+{
+  "name": "dcmjs",
+  "version": "0.1.3",
+  "description": "Javascript implementation of DICOM manipulation",
+  "main": "build/dcmjs.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pieper/dcmjs.git"
+  },
+  "author": "Steve Pieper",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pieper/dcmjs/issues"
+  },
+  "homepage": "https://github.com/pieper/dcmjs#readme",
+  "devDependencies": {
+    "cornerstone-core": "^1.1.0",
+    "cornerstone-math": "^0.1.6",
+    "cornerstone-tools": "^1.0.3",
+    "cornerstone-wado-image-loader": "^1.0.1",
+    "hammerjs": "^2.0.8",
+    "rollup": "^0.45.2"
+  }
+}
