@@ -10,7 +10,7 @@ Flask-Testing==0.7.1
 Flask-WTF==0.14.2
 itsdangerous==0.24
 Jinja==1.2
-Jinja2==2.10
+Jinja2==2.11.3
 Mako==1.0.7
 MarkupSafe==1.0
 MySQL-python==1.2.5
